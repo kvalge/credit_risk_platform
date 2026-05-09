@@ -63,9 +63,34 @@ docker-compose ps
 docker-compose logs airflow-api-server | grep password
 ```
 
-## Notes
-- Airflow 3.x uses SimpleAuthManager by default which auto-generates passwords
-- The generated password is stored in `/opt/airflow/simple_auth_manager_passwords.json.generated` inside the container
+## dbt Project Structure
+
+### Models
+- **Staging** — raw data cleaned and standardized, materialized as views
+- **Intermediate** — business logic combining staging models, materialized as views
+- **Mart** — final analytics-ready tables, materialized as tables
+
+### Running dbt
+
+#### Load seed data
+```bash
+docker-compose run dbt dbt seed --project-dir /opt/dbt/credit_risk --profiles-dir /opt/dbt
+```
+
+#### Run all models
+```bash
+docker-compose run dbt dbt run --project-dir /opt/dbt/credit_risk --profiles-dir /opt/dbt
+```
+
+#### Run tests
+```bash
+docker-compose run dbt dbt test --project-dir /opt/dbt/credit_risk --profiles-dir /opt/dbt
+```
+
+#### Run specific layer
+```bash
+docker-compose run dbt dbt run --select staging --project-dir /opt/dbt/credit_risk --profiles-dir /opt/dbt
+```
 
 ## Data Sources
 
