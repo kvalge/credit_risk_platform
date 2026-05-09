@@ -18,7 +18,8 @@ models:
         description: "Customer employment status"
         tests:
           - accepted_values:
-              values: ['employed', 'self_employed', 'unemployed', 'retired']
+              arguments:
+                values: ['employed', 'self_employed', 'unemployed', 'retired']
       - name: annual_income
         description: "Customer annual income"
         tests:
@@ -36,8 +37,8 @@ models:
         description: "Risk category of the loan product"
         tests:
           - accepted_values:
-              values: ['low', 'medium', 'high']
-
+              arguments:
+                values: ['low', 'medium', 'high']
   - name: stg_credit_score_bands
     description: "Credit score bands and risk levels"
     columns:
@@ -50,7 +51,8 @@ models:
         description: "Risk level associated with the band"
         tests:
           - accepted_values:
-              values: ['very_low', 'low', 'medium', 'high', 'very_high']
+              arguments:
+                values: ['very_low', 'low', 'medium', 'high', 'very_high']
       - name: recommended_action
         description: "Recommended action for this credit band"
         tests:
@@ -73,7 +75,8 @@ models:
         description: "Current status of the loan application"
         tests:
           - accepted_values:
-              values: ['pending', 'approved', 'rejected', 'disbursed', 'defaulted', 'closed']
+              arguments:
+                values: ['pending', 'approved', 'rejected', 'disbursed', 'defaulted', 'closed']
 
   - name: stg_transactions
     description: "Cleaned and standardized transaction data from mock API"
@@ -91,4 +94,5 @@ models:
         description: "Type of transaction"
         tests:
           - accepted_values:
-              values: ['deposit', 'withdrawal', 'transfer', 'payment', 'refund']
+              arguments:
+                values: ['deposit', 'withdrawal', 'transfer', 'payment', 'refund']

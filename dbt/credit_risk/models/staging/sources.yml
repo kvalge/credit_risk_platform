@@ -1,0 +1,10 @@
+version: 2
+
+sources:
+  - name: credit_risk_raw
+    schema: credit_risk_data
+    tables:
+      - name: loan_applications
+        description: "Raw loan applications from mock API"
+      - name: transactions
+        description: "Raw transactions from mock API"
