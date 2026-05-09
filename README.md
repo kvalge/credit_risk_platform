@@ -12,24 +12,24 @@ Built with dbt, Apache Airflow, PostgreSQL, and Docker.
 - **Docker & Docker Compose**
 
 ## Project Structure
-credit_risk_platform/
-├── airflow/
-│   ├── dags/          # Airflow DAGs
-│   ├── logs/          # Airflow logs
-│   └── plugins/       # Airflow plugins
-├── data/
-│   ├── static/        # Static CSV seed data
-│   └── api_mock/      # Mock API response data
-├── dbt/               # dbt project (auto-generated via dbt init)
-├── docker/
-│   ├── Dockerfile.python
-│   └── Dockerfile.dbt
-├── scripts/           # Python ingestion scripts
-├── .env               # Environment variables (not committed)
-├── .env.example       # Environment variable template
-├── .gitignore
-├── docker-compose.yml
-└── requirements.txt
+credit_risk_platform/  
+├── airflow/  
+│   ├── dags/          # Airflow DAGs  
+│   ├── logs/          # Airflow logs  
+│   └── plugins/       # Airflow plugins  
+├── data/  
+│   ├── static/        # Static CSV seed data  
+│   └── api_mock/      # Mock API response data  
+├── dbt/               # dbt project (auto-generated via dbt init)  
+├── docker/  
+│   ├── Dockerfile.python  
+│   └── Dockerfile.dbt  
+├── scripts/           # Python ingestion scripts  
+├── .env               # Environment variables (not committed)  
+├── .env.example       # Environment variable template  
+├── .gitignore  
+├── docker-compose.yml  
+└── requirements.txt  
 
 ## Setup Steps
 
