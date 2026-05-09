@@ -1,0 +1,11 @@
+customer_id,first_name,last_name,email,phone,date_of_birth,country,city,employment_status,annual_income,created_at
+1,John,Smith,john.smith@email.com,+1234567890,1985-03-15,US,New York,employed,75000,2020-01-10
+2,Emma,Johnson,emma.j@email.com,+1234567891,1990-07-22,US,Los Angeles,employed,92000,2020-02-14
+3,Michael,Brown,m.brown@email.com,+1234567892,1978-11-08,US,Chicago,self_employed,120000,2020-03-05
+4,Sarah,Davis,sarah.d@email.com,+1234567893,1995-04-30,US,Houston,employed,55000,2020-04-18
+5,James,Wilson,j.wilson@email.com,+1234567894,1982-09-12,US,Phoenix,unemployed,0,2020-05-22
+6,Lisa,Martinez,lisa.m@email.com,+1234567895,1988-01-25,US,Philadelphia,employed,68000,2020-06-30
+7,David,Anderson,d.anderson@email.com,+1234567896,1975-06-18,US,San Antonio,employed,145000,2020-07-11
+8,Jennifer,Taylor,jen.t@email.com,+1234567897,1992-12-03,US,San Diego,employed,61000,2020-08-25
+9,Robert,Thomas,r.thomas@email.com,+1234567898,1969-08-14,US,Dallas,retired,35000,2020-09-19
+10,Amanda,Jackson,a.jackson@email.com,+1234567899,1998-02-28,US,San Jose,employed,48000,2020-10-07

@@ -1,0 +1,7 @@
+band_id,band_name,score_min,score_max,risk_level,description,default_probability,recommended_action
+1,Exceptional,800,850,very_low,Exceptional credit history,0.001,approve
+2,Very Good,740,799,low,Very good credit history,0.005,approve
+3,Good,670,739,low,Good credit history,0.015,approve
+4,Fair,580,669,medium,Fair credit history,0.05,review
+5,Poor,500,579,high,Poor credit history,0.15,restrict
+6,Very Poor,300,499,very_high,Very poor credit history,0.35,decline

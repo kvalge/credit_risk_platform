@@ -1,0 +1,11 @@
+product_id,product_name,product_type,min_amount,max_amount,min_term_months,max_term_months,base_interest_rate,risk_category
+1,Personal Loan Basic,personal,1000,25000,12,60,8.5,low
+2,Personal Loan Premium,personal,25001,100000,12,84,7.9,medium
+3,Home Mortgage Standard,mortgage,50000,500000,120,360,4.2,low
+4,Home Mortgage Jumbo,mortgage,500001,2000000,120,360,4.8,medium
+5,Auto Loan Standard,auto,5000,50000,24,72,6.3,low
+6,Auto Loan Premium,auto,50001,150000,24,84,6.9,medium
+7,Business Loan SME,business,10000,250000,12,120,9.5,high
+8,Business Loan Corporate,business,250001,5000000,12,240,8.2,high
+9,Credit Line Personal,credit_line,1000,50000,12,60,12.5,high
+10,Student Loan,student,1000,80000,60,180,4.5,low
