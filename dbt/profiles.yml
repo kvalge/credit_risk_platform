@@ -8,5 +8,5 @@ credit_risk:
       password: "{{ env_var('DBT_POSTGRES_PASSWORD') }}"
       port: "{{ env_var('DBT_POSTGRES_PORT') | int }}"
       dbname: "{{ env_var('DBT_POSTGRES_DB') }}"
-      schema: public
+      schema: credit_risk_data
       threads: 1
