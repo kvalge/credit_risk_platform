@@ -1,0 +1,12 @@
+credit_risk:
+  target: dev
+  outputs:
+    dev:
+      type: postgres
+      host: "{{ env_var('DBT_POSTGRES_HOST') }}"
+      user: "{{ env_var('DBT_POSTGRES_USER') }}"
+      password: "{{ env_var('DBT_POSTGRES_PASSWORD') }}"
+      port: "{{ env_var('DBT_POSTGRES_PORT') | int }}"
+      dbname: "{{ env_var('DBT_POSTGRES_DB') }}"
+      schema: public
+      threads: 1
