@@ -1,0 +1,36 @@
+# Python
+venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+dist/
+build/
+
+# Environment variables
+.env
+*.env
+
+# dbt
+dbt/target/
+dbt/dbt_packages/
+dbt/logs/
+
+# Airflow
+airflow/logs/
+airflow/plugins/__pycache__/
+
+# Docker
+docker-compose.override.yml
+
+# VS Code
+.vscode/
+
+# Data files (if sensitive)
+data/static/*.csv
+data/api_mock/*.json
+
+# PostgreSQL
+*.sql~

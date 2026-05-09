@@ -1,0 +1,4 @@
+pandas
+requests
+faker
+psycopg2-binary
