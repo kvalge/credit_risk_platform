@@ -1,0 +1,94 @@
+version: 2
+
+models:
+  - name: stg_customers
+    description: "Cleaned and standardized customer data"
+    columns:
+      - name: customer_id
+        description: "Primary key for customers"
+        tests:
+          - unique
+          - not_null
+      - name: email
+        description: "Customer email address lowercased"
+        tests:
+          - unique
+          - not_null
+      - name: employment_status
+        description: "Customer employment status"
+        tests:
+          - accepted_values:
+              values: ['employed', 'self_employed', 'unemployed', 'retired']
+      - name: annual_income
+        description: "Customer annual income"
+        tests:
+          - not_null
+
+  - name: stg_loan_products
+    description: "Cleaned and standardized loan product data"
+    columns:
+      - name: product_id
+        description: "Primary key for loan products"
+        tests:
+          - unique
+          - not_null
+      - name: risk_category
+        description: "Risk category of the loan product"
+        tests:
+          - accepted_values:
+              values: ['low', 'medium', 'high']
+
+  - name: stg_credit_score_bands
+    description: "Credit score bands and risk levels"
+    columns:
+      - name: band_id
+        description: "Primary key for credit score bands"
+        tests:
+          - unique
+          - not_null
+      - name: risk_level
+        description: "Risk level associated with the band"
+        tests:
+          - accepted_values:
+              values: ['very_low', 'low', 'medium', 'high', 'very_high']
+      - name: recommended_action
+        description: "Recommended action for this credit band"
+        tests:
+          - accepted_values:
+              values: ['approve', 'review', 'restrict', 'decline']
+
+  - name: stg_loan_applications
+    description: "Cleaned and standardized loan application data from mock API"
+    columns:
+      - name: application_id
+        description: "Primary key for loan applications"
+        tests:
+          - unique
+          - not_null
+      - name: customer_id
+        description: "Foreign key to customers"
+        tests:
+          - not_null
+      - name: loan_status
+        description: "Current status of the loan application"
+        tests:
+          - accepted_values:
+              values: ['pending', 'approved', 'rejected', 'disbursed', 'defaulted', 'closed']
+
+  - name: stg_transactions
+    description: "Cleaned and standardized transaction data from mock API"
+    columns:
+      - name: transaction_id
+        description: "Primary key for transactions"
+        tests:
+          - unique
+          - not_null
+      - name: customer_id
+        description: "Foreign key to customers"
+        tests:
+          - not_null
+      - name: transaction_type
+        description: "Type of transaction"
+        tests:
+          - accepted_values:
+              values: ['deposit', 'withdrawal', 'transfer', 'payment', 'refund']
