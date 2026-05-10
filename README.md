@@ -62,6 +62,7 @@ docker-compose ps
 ```bash
 docker-compose logs airflow-api-server | grep password
 ```
+ - docker-compose logs airflow-api-server | findstr "admin"
 
 ## dbt Project Structure
 
