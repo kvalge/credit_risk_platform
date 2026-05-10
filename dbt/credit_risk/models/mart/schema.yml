@@ -1,0 +1,64 @@
+version: 2
+
+models:
+  - name: mart_credit_risk_assessment
+    description: "Full credit risk assessment per customer"
+    columns:
+      - name: customer_id
+        description: "Primary key"
+        tests:
+          - unique
+          - not_null
+      - name: risk_level
+        description: "Overall risk level of the customer"
+        tests:
+          - accepted_values:
+              arguments:
+                values: ['very_low', 'low', 'medium', 'high', 'very_high']
+      - name: debt_category
+        description: "Debt category based on debt to income ratio"
+        tests:
+          - accepted_values:
+              arguments:
+                values: ['low_debt', 'medium_debt', 'high_debt']
+      - name: risk_score
+        description: "Numeric risk score 1-5"
+        tests:
+          - not_null
+
+  - name: mart_loan_portfolio
+    description: "Loan portfolio summary by product type and risk category"
+    columns:
+      - name: product_type
+        description: "Type of loan product"
+        tests:
+          - not_null
+      - name: risk_category
+        description: "Risk category of the loan product"
+        tests:
+          - accepted_values:
+              arguments:
+                values: ['low', 'medium', 'high']
+      - name: total_applications
+        description: "Total number of applications"
+        tests:
+          - not_null
+
+  - name: mart_customer_360
+    description: "Complete 360 view of each customer"
+    columns:
+      - name: customer_id
+        description: "Primary key"
+        tests:
+          - unique
+          - not_null
+      - name: full_name
+        description: "Customer full name"
+        tests:
+          - not_null
+      - name: risk_level
+        description: "Customer risk level"
+        tests:
+          - accepted_values:
+              arguments:
+                values: ['very_low', 'low', 'medium', 'high', 'very_high']

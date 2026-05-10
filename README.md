@@ -65,10 +65,38 @@ docker-compose logs airflow-api-server | grep password
 
 ## dbt Project Structure
 
-### Models
-- **Staging** — raw data cleaned and standardized, materialized as views
-- **Intermediate** — business logic combining staging models, materialized as views
-- **Mart** — final analytics-ready tables, materialized as tables
+## Models
+### Staging Layer
+Cleans and standardizes raw data, materialized as views:
+- `stg_customers` — cleaned customer profiles
+- `stg_loan_products` — cleaned loan product catalog
+- `stg_credit_score_bands` — credit score bands and risk levels
+- `stg_loan_applications` — cleaned loan applications from mock API
+- `stg_transactions` — cleaned transactions from mock API
+
+### Intermediate Layer
+Business logic combining staging models, materialized as views:
+- `int_customer_risk_profile` — joins customers with credit score bands and loan history
+- `int_loan_application_summary` — enriches loan applications with product details
+- `int_customer_transactions_summary` — aggregates transaction history per customer
+
+### Mart Layer
+Final analytics-ready tables, materialized as tables:
+- `mart_credit_risk_assessment` — full risk picture per customer including debt category and risk score
+- `mart_loan_portfolio` — loan portfolio summary grouped by product type and risk category
+- `mart_customer_360` — complete customer view combining risk, transactions and latest application
+
+### dbt Tests
+48 tests covering:
+- Unique and not null constraints
+- Accepted values for categorical columns
+- Data quality across all three layers
+
+### Loading Mock API Data
+Before running dbt models, load the mock API data into PostgreSQL:
+```bash
+docker-compose run python python /opt/scripts/load_api_data_to_postgres.py
+```
 
 ### Running dbt
 

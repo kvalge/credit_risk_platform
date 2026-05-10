@@ -1,0 +1,73 @@
+version: 2
+
+models:
+  - name: int_customer_risk_profile
+    description: "Customer risk profile joining customers, loan applications and credit score bands"
+    columns:
+      - name: customer_id
+        description: "Primary key"
+        tests:
+          - unique
+          - not_null
+      - name: risk_level
+        description: "Risk level derived from credit score band"
+        tests:
+          - accepted_values:
+              arguments:
+                values: ['very_low', 'low', 'medium', 'high', 'very_high']
+      - name: recommended_action
+        description: "Recommended action for this customer"
+        tests:
+          - accepted_values:
+              arguments:
+                values: ['approve', 'review', 'restrict', 'decline']
+      - name: avg_credit_score
+        description: "Average credit score across all applications"
+        tests:
+          - not_null
+      - name: total_applications
+        description: "Total number of loan applications"
+        tests:
+          - not_null
+
+  - name: int_loan_application_summary
+    description: "Loan applications enriched with product details"
+    columns:
+      - name: application_id
+        description: "Primary key"
+        tests:
+          - unique
+          - not_null
+      - name: customer_id
+        description: "Foreign key to customers"
+        tests:
+          - not_null
+      - name: amount_eligibility
+        description: "Whether requested amount is within product range"
+        tests:
+          - accepted_values:
+              arguments:
+                values: ['below_minimum', 'above_maximum', 'within_range']
+      - name: loan_status
+        description: "Current status of the loan application"
+        tests:
+          - accepted_values:
+              arguments:
+                values: ['pending', 'approved', 'rejected', 'disbursed', 'defaulted', 'closed']
+
+  - name: int_customer_transactions_summary
+    description: "Aggregated transaction summary per customer"
+    columns:
+      - name: customer_id
+        description: "Primary key"
+        tests:
+          - unique
+          - not_null
+      - name: total_transactions
+        description: "Total number of transactions"
+        tests:
+          - not_null
+      - name: total_amount
+        description: "Total transaction amount"
+        tests:
+          - not_null
