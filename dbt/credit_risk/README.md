@@ -1,15 +1,39 @@
-Welcome to your new dbt project!
+# dbt project: `credit_risk`
 
-### Using the starter project
+This dbt project transforms ingested “raw-ish” credit risk data in PostgreSQL into analytics-ready marts.
 
-Try running the following commands:
-- dbt run
-- dbt test
+## Where the data lands
 
+- **Database**: from `DBT_POSTGRES_DB`
+- **Schema**: `credit_risk_data` (see `dbt/profiles.yml`)
 
-### Resources:
-- Learn more about dbt [in the docs](https://docs.getdbt.com/docs/introduction)
-- Check out [Discourse](https://discourse.getdbt.com/) for commonly asked questions and answers
-- Join the [chat](https://community.getdbt.com/) on Slack for live discussions and support
-- Find [dbt events](https://events.getdbt.com) near you
-- Check out [the blog](https://blog.getdbt.com/) for the latest news on dbt's development and best practices
+## Inputs
+
+### Seed tables (`seeds/`)
+
+- `customers.csv`
+- `loan_products.csv`
+- `credit_score_bands.csv`
+
+### Ingested tables (loaded by Python)
+
+- `credit_risk_data.loan_applications`
+- `credit_risk_data.transactions`
+
+## Layers
+
+- **Staging models**: `models/staging/` (views)
+- **Intermediate models**: `models/intermediate/` (views)
+- **Mart models**: `models/mart/` (tables)
+
+## Common commands
+
+From the repo root (Docker):
+
+```bash
+docker compose run --rm dbt dbt seed --project-dir /opt/dbt/credit_risk --profiles-dir /opt/dbt
+docker compose run --rm dbt dbt run  --project-dir /opt/dbt/credit_risk --profiles-dir /opt/dbt
+docker compose run --rm dbt dbt test --project-dir /opt/dbt/credit_risk --profiles-dir /opt/dbt
+```
+
+Or inside the Airflow containers dbt is available at `/home/airflow/.local/bin/dbt`.

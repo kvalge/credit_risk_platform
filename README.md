@@ -1,130 +1,179 @@
 # Credit Risk Platform
 
-A data engineering practice project simulating a banking credit risk evaluation platform.
-Built with dbt, Apache Airflow, PostgreSQL, and Docker.
+A small, containerized **data engineering practice project** that simulates a bank-style **credit risk analytics pipeline**.
 
-## Tech Stack
+It ingests mock “API” JSON datasets into PostgreSQL, transforms and tests the data with dbt, and orchestrates the full workflow with Apache Airflow.
 
-- **Python 3.13**
+## What this project does
+
+- **Generates mock operational data** (loan applications + transactions) as JSON (optional step).
+- **Loads raw-like JSON data** into PostgreSQL (`credit_risk_data` schema).
+- **Runs dbt seeds/models/tests** to produce clean staging views, intermediate business logic views, and final marts (tables).
+- **Orchestrates the end-to-end pipeline** in Airflow as a daily DAG.
+
+## Tech stack
+
+- **Apache Airflow 3.1.8** (LocalExecutor, API server)
 - **PostgreSQL 15**
-- **dbt**
-- **Apache Airflow 3.1.8** 
-- **Docker & Docker Compose**
+- **dbt Core + dbt-postgres**
+- **Python scripts** (ingestion + mock data generator)
+- **Docker + Docker Compose**
 
-## Project Structure
-credit_risk_platform/  
-├── airflow/  
-│   ├── dags/          # Airflow DAGs  
-│   ├── logs/          # Airflow logs  
-│   └── plugins/       # Airflow plugins  
-├── data/  
-│   ├── static/        # Static CSV seed data  
-│   └── api_mock/      # Mock API response data  
-├── dbt/               # dbt project (auto-generated via dbt init)  
-├── docker/  
-│   ├── Dockerfile.python  
-│   └── Dockerfile.dbt  
-├── scripts/           # Python ingestion scripts  
-├── .env               # Environment variables (not committed)  
-├── .env.example       # Environment variable template  
-├── .gitignore  
-├── docker-compose.yml  
-└── requirements.txt  
+## Repo structure
 
-## Setup Steps
-
-### 1. Clone the repository
-```bash
-git clone <repo-url>
-cd credit_risk_platform
+```text
+credit_risk_platform/
+├── airflow/
+│   ├── dags/                    # DAG definitions
+│   ├── logs/                    # Airflow logs (also used for dbt log/target dirs)
+│   └── plugins/                 # Airflow plugins (empty by default)
+├── data/
+│   └── api_mock/                # Mock “API responses” as JSON
+├── dbt/
+│   ├── profiles.yml             # dbt profile using env vars
+│   └── credit_risk/             # dbt project: seeds, models, tests
+├── docker/
+│   ├── Dockerfile.airflow       # Airflow image + Python deps (dbt, psycopg2, Faker, etc.)
+│   ├── Dockerfile.dbt           # Standalone dbt container
+│   └── Dockerfile.python        # Standalone Python container for scripts
+├── scripts/
+│   ├── generate_mock_api_data.py
+│   └── load_api_data_to_postgres.py
+├── docker-compose.yml
+├── requirements.txt
+└── README.md
 ```
 
-### 2. Create environment file
+## Docs
+
+- `docs/ARCHITECTURE.md`: components + high-level architecture/dataflow diagram
+- `docs/RUNBOOK.md`: day-to-day commands (start/stop/reset, trigger DAGs, run dbt, reload data)
+- `docs/TROUBLESHOOTING.md`: common failures and fixes (Airflow Execution API/JWT, dbt permissions, Postgres connectivity)
+
+## End-to-end dataflow
+
+### 1) Mock “API” data (JSON)
+
+- **Generator**: `scripts/generate_mock_api_data.py`
+- **Output**: `data/api_mock/loan_applications.json`, `data/api_mock/transactions.json`
+
+### 2) Load JSON into Postgres (raw-ish tables)
+
+- **Loader**: `scripts/load_api_data_to_postgres.py`
+- **Reads from**: `/opt/data/api_mock` (mounted from `./data/api_mock`)
+- **Writes to**: Postgres schema `credit_risk_data`
+- **Creates/overwrites**:
+  - `credit_risk_data.loan_applications`
+  - `credit_risk_data.transactions`
+
+### 3) dbt seeds (reference tables)
+
+CSV seeds in `dbt/credit_risk/seeds/` load into `credit_risk_data`:
+
+- `customers.csv`
+- `loan_products.csv`
+- `credit_score_bands.csv`
+
+### 4) dbt models + tests
+
+dbt profile: `dbt/profiles.yml` (uses `DBT_POSTGRES_*` env vars).
+
+- **Staging** (`dbt/credit_risk/models/staging/`): standardized views
+- **Intermediate** (`dbt/credit_risk/models/intermediate/`): business logic views
+- **Mart** (`dbt/credit_risk/models/mart/`): final analytics tables
+
+Tests are declared in the `schema.yml` files under the models directories.
+
+### 5) Airflow orchestration
+
+DAG: `airflow/dags/credit_risk_pipeline.py`
+
+Task order:
+
+1. `load_api_data` (runs the ingestion script)
+2. `dbt_seed`
+3. `dbt_run_staging` → `dbt_test_staging`
+4. `dbt_run_intermediate` → `dbt_test_intermediate`
+5. `dbt_run_mart` → `dbt_test_mart`
+
+## Running the project (Docker)
+
+### Prerequisites
+
+- Docker Desktop (or Docker Engine) with Compose support
+
+### 1) Configure environment
+
 ```bash
 cp .env.example .env
-# Fill in your credentials in .env
 ```
 
-### 3. Start Docker containers
+Minimum required variables:
+
+- **Postgres**: `POSTGRES_USER`, `POSTGRES_PASSWORD`, `POSTGRES_DB`
+- **Airflow metadata DB**: `AIRFLOW__DATABASE__SQL_ALCHEMY_CONN`
+- **Airflow execution API auth**: `AIRFLOW__API_AUTH__JWT_SECRET`
+
+### 2) Start services
+
 ```bash
-docker-compose up --build -d
+docker compose up -d --build
+docker compose ps
 ```
 
-### 4. Check all containers are running
+### 3) Open Airflow UI
+
+- **URL**: `http://localhost:8080/`
+
+### 4) (Optional) regenerate mock JSON
+
 ```bash
-docker-compose ps
+docker compose run --rm python python /opt/scripts/generate_mock_api_data.py
 ```
 
-### 5. Access Airflow UI
-- URL: http://localhost:8080
-- credentials are auto-generated by Airflow 3.x SimpleAuthManager
-- Find the password in the logs:
+### 5) Run the pipeline
+
+- **Via Airflow UI**: unpause + trigger `credit_risk_pipeline`
+
+Or run steps manually:
+
 ```bash
-docker-compose logs airflow-api-server | grep password
-```
- - docker-compose logs airflow-api-server | findstr "admin"
-
-## dbt Project Structure
-
-## Models
-### Staging Layer
-Cleans and standardizes raw data, materialized as views:
-- `stg_customers` — cleaned customer profiles
-- `stg_loan_products` — cleaned loan product catalog
-- `stg_credit_score_bands` — credit score bands and risk levels
-- `stg_loan_applications` — cleaned loan applications from mock API
-- `stg_transactions` — cleaned transactions from mock API
-
-### Intermediate Layer
-Business logic combining staging models, materialized as views:
-- `int_customer_risk_profile` — joins customers with credit score bands and loan history
-- `int_loan_application_summary` — enriches loan applications with product details
-- `int_customer_transactions_summary` — aggregates transaction history per customer
-
-### Mart Layer
-Final analytics-ready tables, materialized as tables:
-- `mart_credit_risk_assessment` — full risk picture per customer including debt category and risk score
-- `mart_loan_portfolio` — loan portfolio summary grouped by product type and risk category
-- `mart_customer_360` — complete customer view combining risk, transactions and latest application
-
-### dbt Tests
-48 tests covering:
-- Unique and not null constraints
-- Accepted values for categorical columns
-- Data quality across all three layers
-
-### Loading Mock API Data
-Before running dbt models, load the mock API data into PostgreSQL:
-```bash
-docker-compose run python python /opt/scripts/load_api_data_to_postgres.py
+docker compose run --rm python python /opt/scripts/load_api_data_to_postgres.py
+docker compose run --rm dbt dbt seed --project-dir /opt/dbt/credit_risk --profiles-dir /opt/dbt
+docker compose run --rm dbt dbt run  --project-dir /opt/dbt/credit_risk --profiles-dir /opt/dbt
+docker compose run --rm dbt dbt test --project-dir /opt/dbt/credit_risk --profiles-dir /opt/dbt
 ```
 
-### Running dbt
+## Important configuration notes
 
-#### Load seed data
-```bash
-docker-compose run dbt dbt seed --project-dir /opt/dbt/credit_risk --profiles-dir /opt/dbt
-```
+### Airflow 3: Execution API URL + JWT secret
 
-#### Run all models
-```bash
-docker-compose run dbt dbt run --project-dir /opt/dbt/credit_risk --profiles-dir /opt/dbt
-```
+This compose stack runs separate Airflow containers (`api-server`, `scheduler`, `dag-processor`). In Airflow 3, task execution uses the **Execution API**.
 
-#### Run tests
-```bash
-docker-compose run dbt dbt test --project-dir /opt/dbt/credit_risk --profiles-dir /opt/dbt
-```
+`docker-compose.yml` sets:
 
-#### Run specific layer
-```bash
-docker-compose run dbt dbt run --select staging --project-dir /opt/dbt/credit_risk --profiles-dir /opt/dbt
-```
+- `AIRFLOW__CORE__EXECUTION_API_SERVER_URL=http://airflow-api-server:8080/execution/`
+- `AIRFLOW__API_AUTH__JWT_SECRET` (must be the same across all Airflow services)
 
-## Data Sources
+### dbt log/target paths inside Airflow containers
 
-- **Static data** — customer profiles, credit score bands, loan products (CSV seeds)
-- **Mock API data** — simulated real-time transaction and application data via Faker
+To avoid dbt writing logs/artifacts into bind-mounted project directories (which can be non-writable on Windows), `docker-compose.yml` sets:
+
+- `DBT_LOG_PATH=/opt/airflow/logs/dbt_logs`
+- `DBT_TARGET_PATH=/opt/airflow/logs/dbt_target`
+
+## What you can query after a run
+
+Schema: `credit_risk_data`
+
+- **Ingested tables**: `loan_applications`, `transactions`
+- **Seed tables**: `customers`, `loan_products`, `credit_score_bands`
+- **Final marts**: `mart_*` models in `dbt/credit_risk/models/mart/`
+
+## Troubleshooting
+
+See `docs/TROUBLESHOOTING.md`.
 
 ## License
+
 MIT

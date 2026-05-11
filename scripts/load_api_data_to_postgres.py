@@ -1,5 +1,6 @@
 import json
 import os
+
 import psycopg2
 from psycopg2.extras import execute_values
 
@@ -31,7 +32,7 @@ def load_loan_applications(conn):
         data = json.load(f)
 
     with conn.cursor() as cur:
-        cur.execute("DROP TABLE IF EXISTS credit_risk_data.loan_applications;")
+        cur.execute("DROP TABLE IF EXISTS credit_risk_data.loan_applications CASCADE;")
         cur.execute("""
             CREATE TABLE credit_risk_data.loan_applications (
                 application_id      INTEGER PRIMARY KEY,
@@ -69,7 +70,7 @@ def load_transactions(conn):
         data = json.load(f)
 
     with conn.cursor() as cur:
-        cur.execute("DROP TABLE IF EXISTS credit_risk_data.transactions;")
+        cur.execute("DROP TABLE IF EXISTS credit_risk_data.transactions CASCADE;")
         cur.execute("""
             CREATE TABLE credit_risk_data.transactions (
                 transaction_id      INTEGER PRIMARY KEY,
